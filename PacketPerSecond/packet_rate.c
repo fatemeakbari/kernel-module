@@ -28,7 +28,7 @@ unsigned int nf_count_packet_hook( unsigned int hooknum, struct sk_buff *skb, //
             if(skb)
             {
                 count = count+1;
-                printk(KERN_ALERT "count=%d" ,count);
+                //printk(KERN_INFO "count=%d" ,count);
             }
             return NF_ACCEPT;
         }
@@ -42,7 +42,7 @@ static struct nf_hook_ops myhook_ops __read_mostly =  //nf_hook_ops
 };
 
 
-static struct task_struct * rateThread = NULL;   // thread
+static struct task_struct * rThread = NULL;   // thread
 
 static int printRate(void *data )
 {
@@ -59,16 +59,16 @@ static int printRate(void *data )
 static int __init start(void)
 {
     nf_register_hook(&myhook_ops);
-    rateThread = kthread_run(printRate,NULL,"ratethread");
+    rThread = kthread_run(printRate,NULL,"rthread");
     return 0;
 }
 static void __exit finish(void)
 {
-    if(rateThread)
+    if(rThread)
     {
         printk("stop rate module\n");
         nf_unregister_hook(&myhook_ops);
-        kthread_stop(rateThread);
+        kthread_stop(rThread);
     }
 }
 module_init(start);
